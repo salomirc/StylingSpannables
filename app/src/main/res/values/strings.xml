@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StylingSpannables</string>
+    <string name="text_styling_txt">Text styling</string>
+    <string name="text_is_spantastic_txt">Text is spantastic!</string>
 </resources>
