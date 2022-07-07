@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">StylingSpannables</string>
-    <string name="text_styling_txt">Text styling</string>
-    <string name="text_is_spantastic_txt">Text is spantastic!</string>
+    <string name="text_styling">Text styling</string>
+    <string name="text_is_spantastic">Text is spantastic!</string>
+    <string name="home_page_message">Click here to open our Home Page</string>
+    <string name="home_page_url">https://m.youtube.com/</string>
+    <string name="text_with_hyperlink">Please <b>visit</b> <a href="https://learntodroid.com">learntodroid.com</a></string>
+    <string name="welcome_messages">Hello, %1$s! You have &lt;b>%2$d new messages&lt;/b> &lt;a href="http://www.ospacluj.ro">here&lt;/a></string>
 </resources>

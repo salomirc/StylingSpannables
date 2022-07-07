@@ -6,10 +6,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textViewStyle">@style/customTextViewStyle</item>
     </style>
 
-    <style name="spannableTextViewStyle" parent="Widget.AppCompat.TextView">
-        <item name="android:textSize">24sp</item>
+    <style name="customTextViewStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">21sp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.LinkCustom" parent="">
+        <item name="android:textColorLink">@color/colorForLinks</item>
+        <item name="android:textColorHighlight">#00FFFFFF</item>
     </style>
 
 </resources>

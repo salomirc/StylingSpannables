@@ -2,32 +2,84 @@ package com.example.stylingspannables
 
 import android.graphics.Color
 import android.graphics.Typeface.BOLD
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
+import android.text.*
+import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.text.style.URLSpan
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val TAG = "MainActivity"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val spannableTextStyling = SpannableString(getString(R.string.text_styling_txt))
-        spannableTextStyling.setSpan(ForegroundColorSpan(Color.RED), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableTextStyling.setSpan(StyleSpan(BOLD), 5 ,spannableTextStyling.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-        spannableTextStyling.setSpan(ForegroundColorSpan(Color.RED), spannableTextStyling.length - 1, spannableTextStyling.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        textStylingTextView.text = spannableTextStyling
+        //SpannableString()
+        val spannable = SpannableString(getString(R.string.text_styling))
+        spannable.setSpan(ForegroundColorSpan(Color.RED), 0, 4, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(StyleSpan(BOLD), 5 ,spannable.length, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        spannable.setSpan(ForegroundColorSpan(Color.RED), spannable.length - 1, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannedTextView.text = spannable
 
-        val spannableSpantastic = SpannableStringBuilder(getString(R.string.text_is_spantastic_txt))
-        spannableSpantastic.setSpan(StyleSpan(BOLD), 8, 12, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-        spannableSpantastic.setSpan(ForegroundColorSpan(Color.RED), 8, 12, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        spannableSpantastic.insert(12, "(& fon)")
+        //SpannableStringBuilder()
+        val spannableBuilder = SpannableStringBuilder(getString(R.string.text_is_spantastic))
+        spannableBuilder.setSpan(StyleSpan(BOLD), 8, 12, Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        spannableBuilder.setSpan(ForegroundColorSpan(Color.RED), 8, 12, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableBuilder.insert(12, "(& fon)")
+        spantasticTextView.text = spannableBuilder
 
-        spantasticTextView.text = spannableSpantastic
+        //SpannedString()
+        val spanned = SpannedString(getString(R.string.text_is_spantastic))
+        spannedTextView.text = spanned
+        spannedTextView.postDelayed(
+            {
+                spannedTextView.text = SpannedString(spannableBuilder.apply {
+                    this.insert(this.length, "\nbut read-only now!")
+                })
+            },
+            2000
+        )
+
+        //Link span
+        val spanForUrlLink = SpannableString(getString(R.string.home_page_message)).apply {
+            setSpan(URLSpan("https://m.youtube.com"), 6, 10, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        }
+        textWithUrlTextView.apply {
+            text = spanForUrlLink
+            movementMethod = LinkMovementMethod.getInstance()
+        }
+
+        //Text with hyperlink and other HTML markup used directly from XML layout:
+        //Notice that we are using the XML attribute: android:text="@string/text_with_hyperlink"
+        hyperlinkTextView.apply {
+            movementMethod = LinkMovementMethod.getInstance()
+        }
+
+        //String format with HTML tags and HTML sensitive characters in values
+        //Notice that the opening bracket is HTML-escaped, using the &lt; notation.
+        //This approach is useful when you have to use string format with arguments
+        stylingWithHtmlTextView.apply {
+            val username = "<Ciprian>"
+            val mailCount = 10
+            val escapedUsername: String = TextUtils.htmlEncode(username)
+            val txt: String = getString(R.string.welcome_messages, escapedUsername, mailCount)
+            val styledText: Spanned = Html.fromHtml(txt, FROM_HTML_MODE_LEGACY)
+            text = styledText
+            movementMethod = LinkMovementMethod.getInstance()
+
+            Log.d(TAG, "username = $username")
+            Log.d(TAG, "escapedUsername = $escapedUsername")
+            Log.d(TAG, "txt = $txt")
+            Log.d(TAG, "styledText = $styledText")
+        }
     }
 }
