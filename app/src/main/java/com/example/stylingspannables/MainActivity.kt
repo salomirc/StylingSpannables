@@ -64,6 +64,15 @@ class MainActivity : AppCompatActivity() {
             movementMethod = LinkMovementMethod.getInstance()
         }
 
+        // Same result as applying the string resource directly from XML layout
+        hyperlinkFromCodeTextView.apply {
+            val txt: CharSequence = getText(R.string.text_with_hyperlink)
+            text = txt
+            movementMethod = LinkMovementMethod.getInstance()
+
+            Log.d(TAG, "txt returned by getText() method = $txt")
+        }
+
         //String format with HTML tags and HTML sensitive characters in values
         //Notice that the opening bracket is HTML-escaped, using the &lt; notation.
         //This approach is useful when you have to use string format with arguments
@@ -71,7 +80,17 @@ class MainActivity : AppCompatActivity() {
             val username = "<Ciprian>"
             val mailCount = 10
             val escapedUsername: String = TextUtils.htmlEncode(username)
-            val txt: String = getString(R.string.welcome_messages, escapedUsername, mailCount)
+            val url = getString(R.string.home_page_url)
+
+            //Compact version
+//            text = Html.fromHtml(
+//                getString(R.string.welcome_messages, escapedUsername, mailCount, url),
+//                FROM_HTML_MODE_LEGACY
+//            )
+
+            // <![CDATA[ ... ]]> version of the string resources
+            // val txt: String = getString(R.string.welcome_messages_cdata, escapedUsername, mailCount, url)
+            val txt: String = getString(R.string.welcome_messages, escapedUsername, mailCount, url)
             val styledText: Spanned = Html.fromHtml(txt, FROM_HTML_MODE_LEGACY)
             text = styledText
             movementMethod = LinkMovementMethod.getInstance()
@@ -80,6 +99,33 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "escapedUsername = $escapedUsername")
             Log.d(TAG, "txt = $txt")
             Log.d(TAG, "styledText = $styledText")
+        }
+
+        //Styling with spans alternative to above example
+        stylingWithHtmlSpannableAlternativeTextView.apply {
+            val username = "<Ciprian>"
+            val mailCount = 10
+            val builder = SpannableStringBuilder(
+                getString(R.string.welcome_messages_simple_string)
+            ).apply {
+                var positionIndex = 7
+                insert(7, username)
+                positionIndex += username.length + 11
+                insert(positionIndex, "$mailCount ")
+                var styleIndexStart = positionIndex
+                var styleIndexEnd = styleIndexStart + "$mailCount ".length + 12
+                setSpan(StyleSpan(BOLD), styleIndexStart, styleIndexEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                styleIndexStart = styleIndexEnd + 1
+                styleIndexEnd = styleIndexStart + 3
+                setSpan(
+                    URLSpan(getString(R.string.home_page_url)),
+                    styleIndexStart,
+                    styleIndexEnd,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            text = builder
+            movementMethod = LinkMovementMethod.getInstance()
         }
     }
 }
